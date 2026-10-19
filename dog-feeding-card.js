@@ -5,7 +5,7 @@
  * Card type:     custom:dog-feeding-card
  */
 
-const DFC_VERSION = "1.0.0";
+const DFC_VERSION = "1.1.0";
 
 const THEME_COLORS = [
   "primary", "accent", "disabled", "red", "pink", "purple", "deep-purple",
@@ -89,6 +89,18 @@ class DogFeedingCard extends HTMLElement {
           justify-content: space-between;
           gap: 16px;
         }
+        .title {
+          color: var(--ha-card-header-color, var(--primary-text-color));
+          font-family: var(--ha-card-header-font-family, inherit);
+          font-size: var(--ha-card-header-font-size, 24px);
+          font-weight: var(--ha-card-header-font-weight, normal);
+          line-height: 1.2;
+          text-align: center;
+          max-width: 100%;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
         .photo {
           width: var(--dfc-size, 120px);
           max-width: 100%;
@@ -135,15 +147,15 @@ class DogFeedingCard extends HTMLElement {
           outline-offset: 2px;
         }
         .circle {
-          width: 64px;
-          height: 64px;
+          width: 48px;
+          height: 48px;
           border-radius: 50%;
           display: flex;
           align-items: center;
           justify-content: center;
           transition: background-color 0.3s ease, color 0.3s ease;
         }
-        .circle ha-icon { --mdc-icon-size: 38px; }
+        .circle ha-icon { --mdc-icon-size: 28px; }
         .label {
           color: var(--primary-text-color);
           font-size: var(--ha-font-size-m, 14px);
@@ -153,6 +165,7 @@ class DogFeedingCard extends HTMLElement {
         .meal.unavailable .circle { opacity: 0.5; }
       </style>
       <ha-card>
+        <div class="title"></div>
         <div class="photo">
           <img alt="" />
           <ha-icon icon="mdi:dog"></ha-icon>
@@ -171,6 +184,7 @@ class DogFeedingCard extends HTMLElement {
     `;
 
     const root = this.shadowRoot;
+    this._title = root.querySelector(".title");
     this._img = root.querySelector(".photo img");
     this._placeholder = root.querySelector(".photo ha-icon");
     this._img.addEventListener("error", () => this._showImage(false));
@@ -210,6 +224,11 @@ class DogFeedingCard extends HTMLElement {
   _update() {
     const c = this._config;
     if (!c) return;
+
+    // Header
+    const petName = typeof c.name === "string" ? c.name.trim() : "";
+    this._title.textContent = petName;
+    this._title.style.display = petName ? "block" : "none";
 
     // Photo
     const size = Number(c.image_size) || DEFAULTS.image_size;
@@ -254,6 +273,7 @@ class DogFeedingCard extends HTMLElement {
 }
 
 const EDITOR_SCHEMA = [
+  { name: "name", selector: { text: {} } },
   { name: "image", selector: { text: {} } },
   {
     name: "",
@@ -289,6 +309,7 @@ const EDITOR_SCHEMA = [
 ];
 
 const EDITOR_LABELS = {
+  name: "Pet's name",
   image: "Image location",
   image_size: "Image size",
   image_position: "Image focus",
@@ -301,6 +322,7 @@ const EDITOR_LABELS = {
 };
 
 const EDITOR_HELPERS = {
+  name: "Shown as a header above the photo",
   image: "Path or URL, for example /local/dog.jpg for a file in /config/www",
   image_position: "Where to anchor the crop, for example center 20%",
   on_circle_color:
