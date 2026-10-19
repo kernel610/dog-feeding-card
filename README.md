@@ -21,6 +21,7 @@ Add a card, pick **Dog Feeding**, and fill in the editor. Or use YAML:
 
 ```yaml
 type: custom:dog-feeding-card
+name: Buddy
 image: /local/dog.jpg
 image_position: center 25%
 breakfast_entity: binary_sensor.dog_breakfast_fed
@@ -33,6 +34,7 @@ on_icon_color: white
 
 | Option | Default | Description |
 | --- | --- | --- |
+| `name` | none | Pet's name, shown as a header above the photo. Leave empty to hide the header. |
 | `image` | none | Path or URL to the dog photo, for example `/local/dog.jpg`. Cropped to a rounded square. |
 | `image_size` | `120` | Photo size in pixels. |
 | `image_position` | `center` | Where the crop is anchored, as a CSS `object-position` value like `center 20%`. |
